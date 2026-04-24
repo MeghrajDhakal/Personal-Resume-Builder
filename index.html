@@ -4,9 +4,367 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Builder</title>
-    <link rel="stylesheet" href="style.css">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg-color: #f3f4f6;
+    --panel-bg: #ffffff;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --danger-color: #ef4444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* App Layout */
+.app-container {
+    display: flex;
+    height: 100vh;
+}
+
+.editor-panel {
+    width: 50%;
+    height: 100%;
+    background-color: var(--panel-bg);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.02);
+    z-index: 10;
+}
+
+.preview-panel {
+    width: 50%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: #e5e7eb;
+}
+
+/* Editor UI Styles */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.primary-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.primary-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.form-section {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h3 {
+    margin-bottom: 0;
+}
+
+.add-btn {
+    background-color: #eff6ff;
+    color: var(--primary-color);
+    border: 1px solid #bfdbfe;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.add-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.input-grid input:first-child {
+    grid-column: 1 / -1;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+textarea {
+    resize: vertical;
+}
+
+.dynamic-item {
+    background: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.dynamic-item .delete-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.dynamic-item .delete-btn:hover {
+    opacity: 1;
+}
+
+.item-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.item-full {
+    grid-column: 1 / -1;
+}
+
+/* =========================================
+   ATS-Friendly Resume Preview Styles 
+   (Matched exactly to the HTML template)
+   ========================================= */
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 22px 36px;
+    
+    /* Reset from app UI to resume UI */
+    font-family: Calibri, Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    line-height: 1.35;
+    color: #1a1a1a;
+}
+
+.page .header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.page .header h1 {
+    font-size: 22pt;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 4px;
+}
+
+.page .contact-line {
+    font-size: 10pt;
+    color: #333;
+    word-spacing: 2px;
+}
+
+.page .contact-line a {
+    color: #333;
+    text-decoration: none;
+}
+
+.page .separator {
+    margin: 0 6px;
+}
+
+.page h2 {
+    font-size: 12pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #111;
+    border-bottom: 1.5px solid #111;
+    padding-bottom: 2px;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+.page ul {
+    margin-left: 18px;
+    margin-bottom: 4px;
+}
+
+.page li {
+    margin-bottom: 2px;
+    font-size: 10.5pt;
+    color: #222;
+}
+
+.page .entry {
+    margin-bottom: 5px;
+}
+
+.page .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.page .entry-title {
+    font-weight: 700;
+    font-size: 11pt;
+    color: #111;
+}
+
+.page .entry-sub {
+    font-style: italic;
+    font-size: 10.5pt;
+    color: #444;
+}
+
+.page .entry-date {
+    font-size: 10pt;
+    color: #555;
+    white-space: nowrap;
+}
+
+.page .skills-block {
+    margin-bottom: 4px;
+    font-size: 10.5pt;
+}
+
+.page .skills-block strong {
+    color: #111;
+}
+
+
+/* =========================================
+   Print Styles
+   ========================================= */
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    body * {
+        visibility: hidden;
+    }
+    
+    body {
+        background: #fff;
+        height: auto;
+        overflow: visible;
+    }
+
+    .editor-panel {
+        display: none !important;
+    }
+
+    .preview-panel {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0;
+        background: none;
+        overflow: visible;
+    }
+
+    #resumePreview, #resumePreview * {
+        visibility: visible;
+    }
+    
+    #resumePreview {
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-shadow: none;
+        margin: 0;
+        width: 100%;
+        min-height: auto;
+    }
+}
+    </style>
 </head>
 <body>
 
@@ -147,6 +505,314 @@
     </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+// Initial Data Structure
+const data = {
+    personal: {
+        name: '', title: '', email: '', phone: '', location: '', linkedin: '', github: ''
+    },
+    summary: '',
+    skills: [
+        { category: 'Programming Languages', items: 'Java, JavaScript, C, C++, Python' }
+    ],
+    experience: [
+        { title: 'Software Intern', company: 'Cognifyz Technologies', date: 'Nov 2025 – Jan 2026', bullets: 'Developed and optimized Java-based backend modules...\nCollaborated with cross-functional teams...' }
+    ],
+    projects: [
+        { title: 'Secure Password Engine', sub: 'Java, Algorithms, OOP', bullets: 'Developed a robust application...\nApplied OOP principles...' }
+    ],
+    education: [
+        { degree: 'Bachelor of Technology in Computer Science', date: 'Expected 2027', sub: 'University of Science and Technology | CGPA: 8+ / 10' }
+    ],
+    achievements: [
+        { text: 'Solved 400+ problems on LeetCode' }
+    ]
+};
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Populate form with initial data
+    renderSkillsForm();
+    renderExperienceForm();
+    renderProjectForm();
+    renderEducationForm();
+    renderAchievementForm();
+    
+    updatePreview();
+
+    // Print button
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+        window.print();
+    });
+});
+
+// --- Update Data from Inputs ---
+function updateData() {
+    data.personal.name = document.getElementById('name').value;
+    data.personal.title = document.getElementById('title').value; // if needed
+    data.personal.email = document.getElementById('email').value;
+    data.personal.phone = document.getElementById('phone').value;
+    data.personal.location = document.getElementById('location').value;
+    data.personal.linkedin = document.getElementById('linkedin').value;
+    data.personal.github = document.getElementById('github').value;
+
+    data.summary = document.getElementById('summary').value;
+}
+
+// --- Preview Rendering ---
+function updatePreview() {
+    updateData();
+
+    // 1. Personal Info
+    document.getElementById('previewName').innerText = data.personal.name || 'Your Name';
+    
+    let contactItems = [];
+    if (data.personal.phone) contactItems.push(data.personal.phone);
+    if (data.personal.email) contactItems.push(`<a href="mailto:${data.personal.email}">${data.personal.email}</a>`);
+    if (data.personal.linkedin) contactItems.push(`<a href="${data.personal.linkedin}">linkedin</a>`);
+    if (data.personal.github) contactItems.push(`<a href="${data.personal.github}">github</a>`);
+    if (data.personal.location) contactItems.push(data.personal.location);
+    
+    document.getElementById('previewContact').innerHTML = contactItems.join(' <span class="separator">|</span> ');
+
+    // 2. Summary
+    const summaryContainer = document.getElementById('previewSummaryContainer');
+    if (data.summary.trim()) {
+        summaryContainer.style.display = 'block';
+        document.getElementById('previewSummary').innerText = data.summary;
+    } else {
+        summaryContainer.style.display = 'none';
+    }
+
+    // 3. Skills
+    const skillsContainer = document.getElementById('previewSkillsContainer');
+    if (data.skills.length > 0) {
+        skillsContainer.style.display = 'block';
+        const html = data.skills.map(s => `<div class="skills-block"><strong>${s.category}:</strong> ${s.items}</div>`).join('');
+        document.getElementById('previewSkills').innerHTML = html;
+    } else {
+        skillsContainer.style.display = 'none';
+    }
+
+    // 4. Experience
+    const expContainer = document.getElementById('previewExperienceContainer');
+    if (data.experience.length > 0) {
+        expContainer.style.display = 'block';
+        const html = data.experience.map(e => `
+            <div class="entry">
+                <div class="entry-header">
+                    <span class="entry-title">${e.title}${e.company ? ' – ' + e.company : ''}</span>
+                    <span class="entry-date">${e.date}</span>
+                </div>
+                <ul>
+                    ${e.bullets.split('\n').filter(b => b.trim()).map(b => `<li>${b}</li>`).join('')}
+                </ul>
+            </div>
+        `).join('');
+        document.getElementById('previewExperience').innerHTML = html;
+    } else {
+        expContainer.style.display = 'none';
+    }
+
+    // 5. Projects
+    const projContainer = document.getElementById('previewProjectsContainer');
+    if (data.projects.length > 0) {
+        projContainer.style.display = 'block';
+        const html = data.projects.map(p => `
+            <div class="entry">
+                <div class="entry-header">
+                    <span class="entry-title">${p.title}</span>
+                    <span class="entry-sub">${p.sub}</span>
+                </div>
+                <ul>
+                    ${p.bullets.split('\n').filter(b => b.trim()).map(b => `<li>${b}</li>`).join('')}
+                </ul>
+            </div>
+        `).join('');
+        document.getElementById('previewProjects').innerHTML = html;
+    } else {
+        projContainer.style.display = 'none';
+    }
+
+    // 6. Education
+    const eduContainer = document.getElementById('previewEducationContainer');
+    if (data.education.length > 0) {
+        eduContainer.style.display = 'block';
+        const html = data.education.map(e => `
+            <div class="entry">
+                <div class="entry-header">
+                    <span class="entry-title">${e.degree}</span>
+                    <span class="entry-date">${e.date}</span>
+                </div>
+                <div class="entry-sub">${e.sub}</div>
+            </div>
+        `).join('');
+        document.getElementById('previewEducation').innerHTML = html;
+    } else {
+        eduContainer.style.display = 'none';
+    }
+    
+    // 7. Achievements
+    const achContainer = document.getElementById('previewAchievementsContainer');
+    if (data.achievements.length > 0) {
+        achContainer.style.display = 'block';
+        const html = data.achievements.map(a => `<li>${a.text}</li>`).join('');
+        document.getElementById('previewAchievements').innerHTML = html;
+    } else {
+        achContainer.style.display = 'none';
+    }
+}
+
+// --- Dynamic Forms Handlers ---
+
+function createNode(htmlString) {
+    const div = document.createElement('div');
+    div.innerHTML = htmlString.trim();
+    return div.firstChild;
+}
+
+// Skills
+function renderSkillsForm() {
+    const container = document.getElementById('skillsContainer');
+    container.innerHTML = '';
+    data.skills.forEach((item, index) => {
+        const node = createNode(`
+            <div class="dynamic-item">
+                <button type="button" class="delete-btn" onclick="removeSkill(${index})"><i class="fas fa-trash"></i></button>
+                <div class="item-grid">
+                    <input type="text" placeholder="Category (e.g. Languages)" value="${item.category}" oninput="data.skills[${index}].category = this.value; updatePreview()">
+                    <input type="text" placeholder="Items (comma separated)" value="${item.items}" oninput="data.skills[${index}].items = this.value; updatePreview()">
+                </div>
+            </div>
+        `);
+        container.appendChild(node);
+    });
+}
+window.addSkill = function() {
+    data.skills.push({ category: '', items: '' });
+    renderSkillsForm();
+    updatePreview();
+}
+window.removeSkill = function(index) {
+    data.skills.splice(index, 1);
+    renderSkillsForm();
+    updatePreview();
+}
+
+// Experience
+function renderExperienceForm() {
+    const container = document.getElementById('experienceContainer');
+    container.innerHTML = '';
+    data.experience.forEach((item, index) => {
+        const node = createNode(`
+            <div class="dynamic-item">
+                <button type="button" class="delete-btn" onclick="removeExperience(${index})"><i class="fas fa-trash"></i></button>
+                <div class="item-grid">
+                    <input type="text" class="item-full" placeholder="Job Title" value="${item.title}" oninput="data.experience[${index}].title = this.value; updatePreview()">
+                    <input type="text" placeholder="Company" value="${item.company}" oninput="data.experience[${index}].company = this.value; updatePreview()">
+                    <input type="text" placeholder="Date (e.g. Jan 2020 - Present)" value="${item.date}" oninput="data.experience[${index}].date = this.value; updatePreview()">
+                    <textarea class="item-full" placeholder="Responsibilities (one per line)" rows="3" oninput="data.experience[${index}].bullets = this.value; updatePreview()">${item.bullets}</textarea>
+                </div>
+            </div>
+        `);
+        container.appendChild(node);
+    });
+}
+window.addExperience = function() {
+    data.experience.push({ title: '', company: '', date: '', bullets: '' });
+    renderExperienceForm();
+    updatePreview();
+}
+window.removeExperience = function(index) {
+    data.experience.splice(index, 1);
+    renderExperienceForm();
+    updatePreview();
+}
+
+// Projects
+function renderProjectForm() {
+    const container = document.getElementById('projectContainer');
+    container.innerHTML = '';
+    data.projects.forEach((item, index) => {
+        const node = createNode(`
+            <div class="dynamic-item">
+                <button type="button" class="delete-btn" onclick="removeProject(${index})"><i class="fas fa-trash"></i></button>
+                <div class="item-grid">
+                    <input type="text" placeholder="Project Name" value="${item.title}" oninput="data.projects[${index}].title = this.value; updatePreview()">
+                    <input type="text" placeholder="Technologies used" value="${item.sub}" oninput="data.projects[${index}].sub = this.value; updatePreview()">
+                    <textarea class="item-full" placeholder="Description (one per line)" rows="3" oninput="data.projects[${index}].bullets = this.value; updatePreview()">${item.bullets}</textarea>
+                </div>
+            </div>
+        `);
+        container.appendChild(node);
+    });
+}
+window.addProject = function() {
+    data.projects.push({ title: '', sub: '', bullets: '' });
+    renderProjectForm();
+    updatePreview();
+}
+window.removeProject = function(index) {
+    data.projects.splice(index, 1);
+    renderProjectForm();
+    updatePreview();
+}
+
+// Education
+function renderEducationForm() {
+    const container = document.getElementById('educationContainer');
+    container.innerHTML = '';
+    data.education.forEach((item, index) => {
+        const node = createNode(`
+            <div class="dynamic-item">
+                <button type="button" class="delete-btn" onclick="removeEducation(${index})"><i class="fas fa-trash"></i></button>
+                <div class="item-grid">
+                    <input type="text" class="item-full" placeholder="Degree / Certificate" value="${item.degree}" oninput="data.education[${index}].degree = this.value; updatePreview()">
+                    <input type="text" placeholder="Institution & Details" value="${item.sub}" oninput="data.education[${index}].sub = this.value; updatePreview()">
+                    <input type="text" placeholder="Date (e.g. Expected 2027)" value="${item.date}" oninput="data.education[${index}].date = this.value; updatePreview()">
+                </div>
+            </div>
+        `);
+        container.appendChild(node);
+    });
+}
+window.addEducation = function() {
+    data.education.push({ degree: '', date: '', sub: '' });
+    renderEducationForm();
+    updatePreview();
+}
+window.removeEducation = function(index) {
+    data.education.splice(index, 1);
+    renderEducationForm();
+    updatePreview();
+}
+
+// Achievements
+function renderAchievementForm() {
+    const container = document.getElementById('achievementContainer');
+    container.innerHTML = '';
+    data.achievements.forEach((item, index) => {
+        const node = createNode(`
+            <div class="dynamic-item">
+                <button type="button" class="delete-btn" onclick="removeAchievement(${index})"><i class="fas fa-trash"></i></button>
+                <div class="item-grid">
+                    <textarea class="item-full" placeholder="Achievement Detail (You can use HTML tags like <strong>)" rows="2" oninput="data.achievements[${index}].text = this.value; updatePreview()">${item.text}</textarea>
+                </div>
+            </div>
+        `);
+        container.appendChild(node);
+    });
+}
+window.addAchievement = function() {
+    data.achievements.push({ text: '' });
+    renderAchievementForm();
+    updatePreview();
+}
+window.removeAchievement = function(index) {
+    data.achievements.splice(index, 1);
+    renderAchievementForm();
+    updatePreview();
+}
+</script>
 </body>
 </html>
